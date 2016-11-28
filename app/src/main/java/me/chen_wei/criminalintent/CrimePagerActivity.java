@@ -19,7 +19,7 @@ import java.util.UUID;
  * Email : hander_wei@163.com
  */
 
-public class CrimePagerActivity extends AppCompatActivity {
+public class CrimePagerActivity extends BaseActivity {
 
     private static final String EXTRA_CRIME_ID = "me.chen_wei.criminalintent.crime_id";
 

@@ -12,7 +12,7 @@ import android.support.v7.app.AppCompatActivity;
  * Email : hander_wei@163.com
  */
 
-public abstract class SimpleFragmentActivity extends AppCompatActivity {
+public abstract class SimpleFragmentActivity extends BaseActivity {
     protected abstract Fragment createFragment();
 
     @Override

@@ -34,7 +34,7 @@ import java.util.UUID;
  * Email : hander_wei@163.com
  */
 
-public class CrimeFragment extends Fragment {
+public class CrimeFragment extends BaseFragment {
 
     private static final String ARG_CRIME_ID = "crime_id";
     private static final String DIALOG_DATE = "DialogDate";
@@ -147,7 +147,7 @@ public class CrimeFragment extends Fragment {
         mCallButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: 16/11/27 Call to someone 
+                // TODO: 16/11/27 Call to someone
             }
         });
 

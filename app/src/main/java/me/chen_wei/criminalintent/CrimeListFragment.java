@@ -24,7 +24,7 @@ import java.util.List;
  * Email : hander_wei@163.com
  */
 
-public class CrimeListFragment extends Fragment {
+public class CrimeListFragment extends BaseFragment {
 
     private static final String TAG = "CrimeListFragment";
 
