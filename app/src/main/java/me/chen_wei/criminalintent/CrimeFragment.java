@@ -1,5 +1,6 @@
 package me.chen_wei.criminalintent;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -7,8 +8,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
 import android.text.Editable;
@@ -24,9 +25,15 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
+import java.io.File;
 import java.util.Date;
 import java.util.UUID;
+
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 
 /**
  * Created by Hander on 16/11/20.
@@ -41,20 +48,28 @@ public class CrimeFragment extends BaseFragment {
 
     private static final int REQUEST_DATE = 0;
     private static final int REQUEST_CONTACT = 1;
+    private static final int REQUEST_PHOTO = 2;
+    private static final int PERMISSION_REQUEST_CONTACTS = 0x100;
+    private static final int PERMISSION_REQUEST_CAMERA = 0x101;
 
     private Crime mCrime;
+    private File mPhotoFile;
+
     private EditText mTitleField;
     private Button mDateButton;
     private CheckBox mSolvedCheckBox;
     private Button mReportButton;
     private Button mSuspectButton;
     private Button mCallButton;
+    private ImageButton mPhotoButton;
+    private ImageView mPhotoView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         UUID crimeId = (UUID) getArguments().getSerializable(ARG_CRIME_ID);
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
+        mPhotoFile = CrimeLab.get(getActivity()).getPhotoFile(mCrime);
 
         setHasOptionsMenu(true);
     }
@@ -148,10 +163,50 @@ public class CrimeFragment extends BaseFragment {
             @Override
             public void onClick(View view) {
                 // TODO: 16/11/27 Call to someone
+//                callSuspect();
             }
         });
 
+        mPhotoButton = (ImageButton) v.findViewById(R.id.crime_camera);
+
+
+        mPhotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String[] perms = new String[]{Manifest.permission.CAMERA};
+                if (EasyPermissions.hasPermissions(getContext(), perms)) {
+                    takePhoto();
+                } else {
+                    EasyPermissions.requestPermissions(getActivity(), getString(R.string.rationale),
+                            PERMISSION_REQUEST_CAMERA, perms);
+                }
+            }
+        });
+        mPhotoView = (ImageView) v.findViewById(R.id.crime_photo);
+
         return v;
+    }
+
+    @AfterPermissionGranted(PERMISSION_REQUEST_CONTACTS)
+    public void callSuspect(String phoneNum){
+        Uri number = Uri.parse(phoneNum);
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_DIAL);
+    }
+
+    @AfterPermissionGranted(PERMISSION_REQUEST_CAMERA)
+    public void takePhoto() {
+        PackageManager packageManager = getActivity().getPackageManager();
+        final Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        final boolean canTakePhoto = mPhotoFile != null &&
+                captureImage.resolveActivity(packageManager) != null;
+        mPhotoButton.setEnabled(canTakePhoto);
+
+        if (canTakePhoto) {
+            Uri uri = Uri.fromFile(mPhotoFile);
+            captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        }
+        startActivityForResult(captureImage, REQUEST_PHOTO);
     }
 
     @Override
