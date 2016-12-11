@@ -4,9 +4,7 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
- * Created by Hander on 16/11/20.
- * <p>
- * Email : hander_wei@163.com
+ * Created by Hander on 16/11/20. <p> Email : hander_wei@163.com
  */
 
 public class Crime {
@@ -15,9 +13,14 @@ public class Crime {
     private String mTitle;
     private Date mDate;
     private boolean mSolved;
+    private String mSuspect;
 
     public Crime() {
-        mId = UUID.randomUUID();
+        this(UUID.randomUUID());
+    }
+
+    public Crime(UUID id) {
+        mId = id;
         mDate = new Date();
     }
 
@@ -47,5 +50,17 @@ public class Crime {
 
     public void setSolved(boolean solved) {
         mSolved = solved;
+    }
+
+    public String getSuspect() {
+        return mSuspect;
+    }
+
+    public void setSuspect(String suspect) {
+        mSuspect = suspect;
+    }
+
+    public String getPhotoFilename() {
+        return "IMG_" + getId().toString() + ".jpg";
     }
 }
